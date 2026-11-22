@@ -98,3 +98,14 @@ Você pode ajustar parâmetros em [`config.py`](config.py):
 - `delay_between_messages`: Tempo de espera entre cada mensagem enviada (padrão: 8 segundos).
 - `pause`: Intervalo entre ações do mouse/teclado.
 - `browser`: Escolha entre `"chrome"` ou `"edge"`.
+
+## Painel Web no Vercel
+
+O Vercel publica a interface estática em `templates/index.html`; a automação não roda no Vercel. Para usar os controles, instale as dependências do projeto e inicie o servidor neste computador:
+
+```bash
+python -m pip install -r requirements.txt
+python server.py
+```
+
+Abra o painel no Vercel e permita o acesso à rede local no navegador, se solicitado. O painel se conecta ao bot em `http://127.0.0.1:8000`; mantenha o servidor local ativo enquanto usar os controles. Se usar um domínio próprio ou uma URL de preview do Vercel, inclua a origem exata na variável `BOT_ALLOWED_ORIGINS` do servidor local, separando múltiplas origens por vírgula.
