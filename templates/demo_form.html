@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulário de Demonstração - Bot de Automação</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --success: #16a34a;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text: #1e293b;
+            --border: #e2e8f0;
+        }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            padding: 2rem 1rem;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        header h1 {
+            color: #0f172a;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        header p {
+            color: #64748b;
+        }
+        .grid-layout {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+        @media (min-width: 768px) {
+            .grid-layout {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+        .card h2 {
+            font-size: 1.25rem;
+            margin-bottom: 1.25rem;
+            color: #334155;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+            color: #475569;
+        }
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"],
+        select {
+            width: 100%;
+            padding: 0.65rem 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        input:focus, select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+        }
+        .radio-group, .checkbox-group {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            margin-top: 0.5rem;
+        }
+        .radio-option, .checkbox-option {
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+        .btn-submit {
+            width: 100%;
+            background-color: var(--primary);
+            color: #ffffff;
+            border: none;
+            padding: 0.75rem;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 1rem;
+            transition: background-color 0.2s;
+        }
+        .btn-submit:hover {
+            background-color: var(--primary-hover);
+        }
+        .status-msg {
+            display: none;
+            padding: 0.75rem;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        .status-msg.success {
+            display: block;
+            background-color: #dcfce7;
+            color: #15803d;
+            border: 1px solid #bbf7d0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+        }
+        th, td {
+            text-align: left;
+            padding: 0.6rem;
+            border-bottom: 1px solid var(--border);
+        }
+        th {
+            background-color: #f1f5f9;
+            color: #475569;
+            font-weight: 600;
+        }
+        .badge {
+            display: inline-block;
+            padding: 0.2rem 0.5rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            background-color: #e0f2fe;
+            color: #0369a1;
+        }
+        .counter {
+            background: #2563eb;
+            color: white;
+            font-size: 0.75rem;
+            padding: 0.15rem 0.5rem;
+            border-radius: 9999px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🤖 Sistema de Cadastro - Demonstração</h1>
+            <p>Página de teste local para automação com Selenium (Preenchimento de Formulários)</p>
+        </header>
+
+        <div class="grid-layout">
+            <!-- FORMULÁRIO -->
+            <div class="card">
+                <h2>📝 Novo Cadastro</h2>
+                <div id="statusAlert" class="status-msg"></div>
+
+                <form id="cadastroForm">
+                    <div class="form-group">
+                        <label for="nome">Nome Completo *</label>
+                        <input type="text" id="nome" name="nome" placeholder="Ex: Maria Silva" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">E-mail Profissional *</label>
+                        <input type="email" id="email" name="email" placeholder="maria@empresa.com" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="telefone">Telefone / WhatsApp *</label>
+                        <input type="tel" id="telefone" name="telefone" placeholder="5511999999999" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="departamento">Departamento *</label>
+                        <select id="departamento" name="departamento" required>
+                            <option value="">Selecione...</option>
+                            <option value="Tecnologia">Tecnologia</option>
+                            <option value="Vendas">Vendas</option>
+                            <option value="Financeiro">Financeiro</option>
+                            <option value="Recursos Humanos">Recursos Humanos</option>
+                            <option value="Operações">Operações</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Nível de Experiência</label>
+                        <div class="radio-group">
+                            <label class="radio-option">
+                                <input type="radio" name="experiencia" value="Junior" checked> Júnior
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="experiencia" value="Pleno"> Pleno
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="experiencia" value="Senior"> Sênior
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="checkbox-group">
+                            <label class="checkbox-option">
+                                <input type="checkbox" id="termos" name="termos" checked required>
+                                Confirmo a precisão dos dados inseridos
+                            </label>
+                        </div>
+                    </div>
+
+                    <button type="submit" id="btnSalvar" class="btn-submit">💾 Salvar Cadastro</button>
+                </form>
+            </div>
+
+            <!-- TABELA DE REGISTROS SALVOS -->
+            <div class="card">
+                <h2>📋 Registros Inseridos <span id="regCount" class="counter">0</span></h2>
+                <div style="overflow-x: auto;">
+                    <table id="tabelaCadastros">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Nome</th>
+                                <th>E-mail</th>
+                                <th>Depto</th>
+                                <th>Nível</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabelaCorpo">
+                            <!-- Registros inseridos aparecem aqui -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('cadastroForm');
+        const alertBox = document.getElementById('statusAlert');
+        const tabelaCorpo = document.getElementById('tabelaCorpo');
+        const regCount = document.getElementById('regCount');
+        let contador = 0;
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const nome = document.getElementById('nome').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const telefone = document.getElementById('telefone').value.trim();
+            const depto = document.getElementById('departamento').value;
+            const nivel = document.querySelector('input[name="experiencia"]:checked').value;
+
+            contador++;
+            regCount.textContent = contador;
+
+            // Insere linha na tabela
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${contador}</td>
+                <td><strong>${nome}</strong></td>
+                <td>${email}</td>
+                <td><span class="badge">${depto}</span></td>
+                <td>${nivel}</td>
+            `;
+            tabelaCorpo.prepend(tr);
+
+            // Exibe mensagem de sucesso
+            alertBox.className = 'status-msg success';
+            alertBox.textContent = `✅ Cadastro de "${nome}" salvo com sucesso! (Total: ${contador})`;
+            alertBox.style.display = 'block';
+
+            // Limpa formulário
+            form.reset();
+            document.querySelector('input[name="experiencia"][value="Junior"]').checked = true;
+            document.getElementById('termos').checked = true;
+
+            setTimeout(() => {
+                alertBox.style.display = 'none';
+            }, 3000);
+        });
+    </script>
+</body>
+</html>

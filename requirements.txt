@@ -1,0 +1,20 @@
+# ==========================================
+# Dependências do Bot de Automação
+# ==========================================
+
+# Automação Web e Navegador
+selenium>=4.15.0
+webdriver-manager>=4.0.0
+
+# Automação Desktop, Mouse e Teclado
+pyautogui>=0.9.54
+opencv-python>=4.8.0
+pillow>=10.0.0
+
+# Manipulação de Dados (Planilhas e CSV)
+pandas>=2.0.0
+openpyxl>=3.1.0
+
+# Interface Gráfica e Terminal Moderno
+customtkinter>=5.2.0
+rich>=13.0.0

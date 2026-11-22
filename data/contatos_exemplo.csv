@@ -1,0 +1,6 @@
+nome,telefone,pedido,status
+Contato Exemplo 1,00000000001,PED-DEMO-001,Aprovado
+Contato Exemplo 2,00000000002,PED-DEMO-002,Em Transporte
+Contato Exemplo 3,00000000003,PED-DEMO-003,Entregue
+Contato Exemplo 4,00000000004,PED-DEMO-004,Aprovado
+Contato Exemplo 5,00000000005,PED-DEMO-005,Em Separacao

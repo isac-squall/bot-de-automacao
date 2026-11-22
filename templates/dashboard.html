@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🤖 Bot de Automação - Painel Web (Localhost)</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --success: #16a34a;
+            --success-hover: #15803d;
+            --warning: #f59e0b;
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --card-border: #334155;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text-main);
+            padding: 2rem 1rem;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--card-border);
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .header-title h1 {
+            font-size: 1.8rem;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .header-title p {
+            color: var(--text-muted);
+            margin-top: 0.25rem;
+        }
+
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.4rem 0.9rem;
+            border-radius: 9999px;
+            background: rgba(34, 197, 94, 0.15);
+            color: #4ade80;
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid var(--card-border);
+            padding-bottom: 0.5rem;
+        }
+
+        .tab-btn {
+            background: transparent;
+            color: var(--text-muted);
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .tab-btn.active, .tab-btn:hover {
+            background: var(--card-bg);
+            color: #ffffff;
+        }
+
+        .tab-btn.active {
+            color: #60a5fa;
+            border-bottom: 2px solid #3b82f6;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+
+        @media (min-width: 850px) {
+            .grid-2 {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+        }
+
+        .card h2 {
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+            color: #e2e8f0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .card p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin-bottom: 1rem;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.7rem 1.2rem;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+            text-decoration: none;
+            width: 100%;
+            margin-top: 0.5rem;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+        .btn-primary:hover {
+            background: var(--primary-hover);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+        .btn-success:hover {
+            background: var(--success-hover);
+        }
+
+        .btn-secondary {
+            background: #334155;
+            color: #e2e8f0;
+        }
+        .btn-secondary:hover {
+            background: #475569;
+        }
+
+        .log-box {
+            background: #090d16;
+            border: 1px solid #1e293b;
+            border-radius: 8px;
+            padding: 1rem;
+            height: 180px;
+            overflow-y: auto;
+            font-family: Consolas, monospace;
+            font-size: 0.85rem;
+            color: #38bdf8;
+            margin-top: 1.5rem;
+        }
+
+        .log-line {
+            margin-bottom: 0.25rem;
+            line-height: 1.4;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 0.6rem;
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        th {
+            background-color: #090d16;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.2rem 0.5rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            background-color: rgba(56, 189, 248, 0.15);
+            color: #38bdf8;
+        }
+
+        .info-pill {
+            background: rgba(148, 163, 184, 0.1);
+            border-left: 3px solid #38bdf8;
+            padding: 0.75rem 1rem;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 1rem;
+            font-size: 0.85rem;
+            color: #cbd5e1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-title">
+                <h1>🤖 Bot de Automação</h1>
+                <p>Painel Web Localhost - Selenium, PyAutoGUI & Mensagens</p>
+            </div>
+            <div class="status-pill" id="serverStatus">
+                ● Servidor Ativo (localhost:8000)
+            </div>
+        </header>
+
+        <nav class="tabs">
+            <button class="tab-btn active" onclick="switchTab('tab-forms')">📝 Formulários Web</button>
+            <button class="tab-btn" onclick="switchTab('tab-msgs')">📨 Mensagens Automáticas</button>
+            <button class="tab-btn" onclick="switchTab('tab-desktop')">🖥️ Tarefas Desktop</button>
+        </nav>
+
+        <!-- ABA 1: FORMULÁRIOS WEB -->
+        <div id="tab-forms" class="tab-content active">
+            <div class="grid-2">
+                <div class="card">
+                    <h2>📝 Automação com Selenium</h2>
+                    <p>O robô abre o navegador, lê a planilha com cadastros de clientes e preenche automaticamente cada campo da página de demonstração.</p>
+                    
+                    <div class="info-pill">
+                        <strong>Origem de dados:</strong> <code>data/cadastros_exemplo.csv</code> (5 registros)
+                    </div>
+
+                    <button class="btn btn-primary" onclick="executarFormulario()">
+                        🚀 Disparar Robô Selenium Agora
+                    </button>
+                    <a href="/formulario" target="_blank" class="btn btn-secondary">
+                        🌐 Abrir Formulário no Navegador (Nova Aba)
+                    </a>
+                </div>
+
+                <div class="card">
+                    <h2>📋 O que o Robô preenche:</h2>
+                    <p>Campos suportados na demonstração:</p>
+                    <ul style="margin-left: 1.25rem; color: var(--text-muted); font-size: 0.9rem; line-height: 1.8;">
+                        <li><strong>Nome Completo</strong> (Input de texto)</li>
+                        <li><strong>E-mail Profissional</strong> (Validação de formato)</li>
+                        <li><strong>Telefone / WhatsApp</strong> (Telefone com DDI)</li>
+                        <li><strong>Departamento</strong> (Dropdown com seleção por texto)</li>
+                        <li><strong>Nível</strong> (Radio button: Júnior, Pleno, Sênior)</li>
+                        <li><strong>Termos</strong> (Checkbox de aceite)</li>
+                        <li><strong>Submissão</strong> (Clique no botão Salvar)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- ABA 2: MENSAGENS -->
+        <div id="tab-msgs" class="tab-content">
+            <div class="card">
+                <h2>📨 Disparo de Mensagens Personalizadas</h2>
+                <p>Geração automática de mensagens lendo contatos e personalizando cada linha com variáveis dinâmicas.</p>
+                
+                <div style="margin-bottom: 1rem;">
+                    <button class="btn btn-success" style="width: auto; margin-right: 0.5rem;" onclick="simularEnvio()">
+                        ▶️ Executar Simulação de Disparo
+                    </button>
+                    <button class="btn btn-primary" style="width: auto;" onclick="carregarContatos()">
+                        🔄 Atualizar Lista de Contatos
+                    </button>
+                </div>
+
+                <div style="overflow-x: auto;">
+                    <table id="tabelaContatos">
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>Telefone</th>
+                                <th>Pedido</th>
+                                <th>Mensagem Gerada</th>
+                            </tr>
+                        </thead>
+                        <tbody id="corpoContatos">
+                            <tr>
+                                <td colspan="4" style="text-align: center; color: var(--text-muted);">Carregando contatos...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ABA 3: TAREFAS DESKTOP -->
+        <div id="tab-desktop" class="tab-content">
+            <div class="grid-2">
+                <div class="card">
+                    <h2>🖥️ Automação de Tarefas Desktop</h2>
+                    <p>Controle do teclado, mouse e execução de rotinas automáticas no Windows via PyAutoGUI.</p>
+
+                    <div class="info-pill">
+                        🛡️ <strong>Fail-Safe de Emergência:</strong> Arraste o mouse para o canto superior esquerdo da tela para interromper imediatamente qualquer rotina.
+                    </div>
+
+                    <button class="btn btn-primary" onclick="executarDesktopDemo()">
+                        📝 Abrir Bloco de Notas e Digitar Relatório
+                    </button>
+                    <button class="btn btn-secondary" onclick="verificarDesktopInfo()">
+                        🖱️ Verificar Resolução e Posição do Mouse
+                    </button>
+                </div>
+
+                <div class="card">
+                    <h2>📊 Informações do Sistema</h2>
+                    <div id="desktopInfo" style="color: var(--text-muted); font-size: 0.9rem; line-height: 2;">
+                        <p>Clique em "Verificar Resolução e Posição" para consultar o estado do monitor.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- LOGS EM TEMPO REAL -->
+        <div class="card" style="margin-top: 1.5rem;">
+            <h2>📜 Console de Operações em Tempo Real</h2>
+            <div class="log-box" id="logBox">
+                <div class="log-line">[00:00:00] Painel de controle Web iniciado na porta 8000. Pronto para operar.</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+
+            if (tabId === 'tab-msgs') {
+                carregarContatos();
+            }
+        }
+
+        function log(msg) {
+            const box = document.getElementById('logBox');
+            const now = new Date().toLocaleTimeString();
+            const div = document.createElement('div');
+            div.className = 'log-line';
+            div.textContent = `[${now}] ${msg}`;
+            box.appendChild(div);
+            box.scrollTop = box.scrollHeight;
+        }
+
+        async function executarFormulario() {
+            log("Iniciando requisição para o robô Selenium...");
+            try {
+                const res = await fetch('/api/executar-formulario', { method: 'POST' });
+                const data = await res.json();
+                log(data.mensagem);
+            } catch (err) {
+                log("Erro ao comunicar com servidor: " + err);
+            }
+        }
+
+        async function carregarContatos() {
+            try {
+                const res = await fetch('/api/contatos');
+                const data = await res.json();
+                const tbody = document.getElementById('corpoContatos');
+                tbody.innerHTML = '';
+                
+                data.contatos.forEach(item => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td><strong>${item.nome}</strong></td>
+                        <td>${item.telefone}</td>
+                        <td><span class="badge">${item.pedido}</span></td>
+                        <td>${item.mensagem}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+                log(`Lista de contatos carregada: ${data.contatos.length} contatos prontos.`);
+            } catch (err) {
+                log("Erro ao carregar contatos: " + err);
+            }
+        }
+
+        async function simularEnvio() {
+            log("Disparando simulação de mensagens...");
+            try {
+                const res = await fetch('/api/simular-mensagens', { method: 'POST' });
+                const data = await res.json();
+                log(data.mensagem);
+            } catch (err) {
+                log("Erro na simulação: " + err);
+            }
+        }
+
+        async function executarDesktopDemo() {
+            log("Iniciando demonstração do Desktop no Bloco de Notas...");
+            try {
+                const res = await fetch('/api/executar-desktop', { method: 'POST' });
+                const data = await res.json();
+                log(data.mensagem);
+            } catch (err) {
+                log("Erro ao executar demo: " + err);
+            }
+        }
+
+        async function verificarDesktopInfo() {
+            try {
+                const res = await fetch('/api/desktop-info');
+                const data = await res.json();
+                const container = document.getElementById('desktopInfo');
+                container.innerHTML = `
+                    <p>🖥️ <strong>Resolução:</strong> ${data.resolucao[0]} x ${data.resolucao[1]}</p>
+                    <p>🖱️ <strong>Posição Atual do Mouse:</strong> X = ${data.mouse[0]}, Y = ${data.mouse[1]}</p>
+                    <p>🛡️ <strong>Fail-Safe Ativo:</strong> ${data.failsafe ? 'Sim (Canto superior esquerdo)' : 'Não'}</p>
+                `;
+                log(`Informações desktop obtidas: ${data.resolucao[0]}x${data.resolucao[1]}`);
+            } catch (err) {
+                log("Erro ao obter dados: " + err);
+            }
+        }
+
+        // Carrega contatos na inicialização
+        carregarContatos();
+    </script>
+</body>
+</html>
