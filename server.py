@@ -18,6 +18,17 @@ from modules.desktop_automator import DesktopAutomator
 
 PORT = 8000
 
+ALLOWED_ORIGINS = {
+    "http://127.0.0.1:8000",
+    "http://localhost:8000",
+    "https://src-amber-tau.vercel.app",
+}
+ALLOWED_ORIGINS.update(
+    origin.strip()
+    for origin in os.environ.get("BOT_ALLOWED_ORIGINS", "").split(",")
+    if origin.strip()
+)
+
 # Logs compartilhados em memória
 LOG_BUFFER = []
 
@@ -30,17 +41,36 @@ def registrar_log(msg):
 
 class BotRequestHandler(http.server.SimpleHTTPRequestHandler):
     def end_headers(self):
-        # Permite CORS para facilidade de testes
-        self.send_header("Access-Control-Allow-Origin", "*")
+        origin = self.headers.get("Origin")
+        if origin in ALLOWED_ORIGINS:
+            self.send_header("Access-Control-Allow-Origin", origin)
+            self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+            self.send_header("Access-Control-Allow-Headers", "Content-Type")
+            self.send_header("Vary", "Origin")
+            if self.headers.get("Access-Control-Request-Private-Network") == "true":
+                self.send_header("Access-Control-Allow-Private-Network", "true")
         self.send_header("Cache-Control", "no-cache, no-store, must-revalidate")
         super().end_headers()
 
+    def do_OPTIONS(self):
+        if self.headers.get("Origin") not in ALLOWED_ORIGINS:
+            self.send_error(403, "Origin not allowed")
+            return
+
+        self.send_response(204)
+        self.end_headers()
+
     def do_GET(self):
+        origin = self.headers.get("Origin")
+        if self.path.startswith("/api/") and origin and origin not in ALLOWED_ORIGINS:
+            self.send_error(403, "Origin not allowed")
+            return
+
         if self.path == "/" or self.path == "/index.html":
             self.send_response(200)
             self.send_header("Content-type", "text/html; charset=utf-8")
             self.end_headers()
-            dashboard_path = BASE_DIR / "templates" / "dashboard.html"
+            dashboard_path = BASE_DIR / "templates" / "index.html"
             with open(dashboard_path, "rb") as f:
                 self.wfile.write(f.read())
 
@@ -106,6 +136,10 @@ class BotRequestHandler(http.server.SimpleHTTPRequestHandler):
             super().do_GET()
 
     def do_POST(self):
+        if self.headers.get("Origin") not in ALLOWED_ORIGINS:
+            self.send_error(403, "Origin not allowed")
+            return
+
         if self.path == "/api/executar-formulario":
             self.send_response(200)
             self.send_header("Content-type", "application/json")

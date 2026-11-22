@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🤖 Bot de Automação - Painel Web (Localhost)</title>
+    <title>🤖 Bot de Automação - Painel Web</title>
     <style>
         :root {
             --primary: #2563eb;
@@ -67,11 +67,17 @@
             gap: 0.5rem;
             padding: 0.4rem 0.9rem;
             border-radius: 9999px;
-            background: rgba(34, 197, 94, 0.15);
-            color: #4ade80;
-            border: 1px solid rgba(34, 197, 94, 0.3);
+            background: rgba(245, 158, 11, 0.15);
+            color: #fbbf24;
+            border: 1px solid rgba(245, 158, 11, 0.3);
             font-size: 0.85rem;
             font-weight: 600;
+        }
+
+        .status-pill.online {
+            background: rgba(34, 197, 94, 0.15);
+            color: #4ade80;
+            border-color: rgba(34, 197, 94, 0.3);
         }
 
         .tabs {
@@ -252,12 +258,16 @@
         <header>
             <div class="header-title">
                 <h1>🤖 Bot de Automação</h1>
-                <p>Painel Web Localhost - Selenium, PyAutoGUI & Mensagens</p>
+                <p>Interface no Vercel; automações executadas pelo bot local</p>
             </div>
-            <div class="status-pill" id="serverStatus">
-                ● Servidor Ativo (localhost:8000)
+            <div class="status-pill" id="serverStatus" aria-live="polite">
+                ○ Bot local desconectado
             </div>
         </header>
+
+        <div class="info-pill">
+            Para usar os controles, inicie <code>python server.py</code> neste computador e permita o acesso à rede local no navegador, se solicitado.
+        </div>
 
         <nav class="tabs">
             <button class="tab-btn active" onclick="switchTab('tab-forms')">📝 Formulários Web</button>
@@ -279,8 +289,8 @@
                     <button class="btn btn-primary" onclick="executarFormulario()">
                         🚀 Disparar Robô Selenium Agora
                     </button>
-                    <a href="/formulario" target="_blank" class="btn btn-secondary">
-                        🌐 Abrir Formulário no Navegador (Nova Aba)
+                    <a href="http://127.0.0.1:8000/formulario" target="_blank" class="btn btn-secondary">
+                        🌐 Abrir Formulário Local (Nova Aba)
                     </a>
                 </div>
 
@@ -373,6 +383,36 @@
     </div>
 
     <script>
+        const BOT_BASE_URL = 'http://127.0.0.1:8000';
+
+        async function requisitarBot(path, options) {
+            const response = await fetch(`${BOT_BASE_URL}${path}`, options);
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}`);
+            }
+            return response;
+        }
+
+        function atualizarStatusBot(conectado) {
+            const status = document.getElementById('serverStatus');
+            status.textContent = conectado ? '● Bot local conectado' : '○ Bot local desconectado';
+            status.classList.toggle('online', conectado);
+        }
+
+        async function verificarConexaoBot() {
+            try {
+                await requisitarBot('/api/status');
+                atualizarStatusBot(true);
+                return true;
+            } catch (err) {
+                atualizarStatusBot(false);
+                document.getElementById('corpoContatos').innerHTML =
+                    '<tr><td colspan="4" style="text-align: center; color: var(--text-muted);">Inicie o bot local com python server.py para carregar os dados.</td></tr>';
+                log("Bot local indisponível. Inicie `python server.py` e permita o acesso local no navegador.");
+                return false;
+            }
+        }
+
         function switchTab(tabId) {
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
@@ -398,7 +438,7 @@
         async function executarFormulario() {
             log("Iniciando requisição para o robô Selenium...");
             try {
-                const res = await fetch('/api/executar-formulario', { method: 'POST' });
+                const res = await requisitarBot('/api/executar-formulario', { method: 'POST' });
                 const data = await res.json();
                 log(data.mensagem);
             } catch (err) {
@@ -408,7 +448,7 @@
 
         async function carregarContatos() {
             try {
-                const res = await fetch('/api/contatos');
+                const res = await requisitarBot('/api/contatos');
                 const data = await res.json();
                 const tbody = document.getElementById('corpoContatos');
                 tbody.innerHTML = '';
@@ -432,7 +472,7 @@
         async function simularEnvio() {
             log("Disparando simulação de mensagens...");
             try {
-                const res = await fetch('/api/simular-mensagens', { method: 'POST' });
+                const res = await requisitarBot('/api/simular-mensagens', { method: 'POST' });
                 const data = await res.json();
                 log(data.mensagem);
             } catch (err) {
@@ -443,7 +483,7 @@
         async function executarDesktopDemo() {
             log("Iniciando demonstração do Desktop no Bloco de Notas...");
             try {
-                const res = await fetch('/api/executar-desktop', { method: 'POST' });
+                const res = await requisitarBot('/api/executar-desktop', { method: 'POST' });
                 const data = await res.json();
                 log(data.mensagem);
             } catch (err) {
@@ -453,7 +493,7 @@
 
         async function verificarDesktopInfo() {
             try {
-                const res = await fetch('/api/desktop-info');
+                const res = await requisitarBot('/api/desktop-info');
                 const data = await res.json();
                 const container = document.getElementById('desktopInfo');
                 container.innerHTML = `
@@ -467,8 +507,13 @@
             }
         }
 
-        // Carrega contatos na inicialização
-        carregarContatos();
+        async function iniciarPainel() {
+            if (await verificarConexaoBot()) {
+                await carregarContatos();
+            }
+        }
+
+        iniciarPainel();
     </script>
 </body>
 </html>
